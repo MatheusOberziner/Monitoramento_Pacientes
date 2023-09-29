@@ -1,8 +1,8 @@
 {
   "name": "frontend",
   "version": "0.0.1",
-  "description": "A Quasar Project",
-  "productName": "Monitoramento de Pacinetes",
+  "description": "Projeto de monitoramento de paciente para unidade de saúde",
+  "productName": "Monitoramento de Pacientes",
   "author": "Matheus Schmidt Oberziner <matheus.oberziner@unidavi.edu.br>",
   "private": true,
   "scripts": {
