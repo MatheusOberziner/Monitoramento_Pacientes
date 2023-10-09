@@ -18,7 +18,7 @@ type CreatePacienteRequest struct {
 	Cidade          string `json:"cidade" query:"cidade"`
 }
 
-func Post(paciente models.Paciente) (id int64, err error) {
+func post(paciente models.Paciente) (id int64, err error) {
 	conn, err := db.OpenConnection()
 	if err != nil {
 		return
@@ -55,7 +55,7 @@ func CreatePaciente(c echo.Context) error {
 		Data_nascimento: dataNascimento,
 	}
 
-	id, err := Post(paciente)
+	id, err := post(paciente)
 	if err != nil {
 		log.Println("Erro: ", err)
 		return c.String(http.StatusInternalServerError, "Erro ao adicionar um paciente")

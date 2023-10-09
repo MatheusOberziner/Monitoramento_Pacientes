@@ -9,7 +9,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func GetAll(nameFilter string) (pacientes []models.Paciente, err error) {
+func getAll(nameFilter string) (pacientes []models.Paciente, err error) {
 	conn, err := db.OpenConnection()
 	if err != nil {
 		return nil, err
@@ -48,7 +48,7 @@ func GetAll(nameFilter string) (pacientes []models.Paciente, err error) {
 func ListPacientes(c echo.Context) error {
 	nameFilter := c.QueryParam("nome")
 
-	pacientes, err := GetAll(nameFilter)
+	pacientes, err := getAll(nameFilter)
 	if err != nil {
 		log.Println("Error", err)
 		return c.String(http.StatusInternalServerError, "Erro ao listar pacientes")
