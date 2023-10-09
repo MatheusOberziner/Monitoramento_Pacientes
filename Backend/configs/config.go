@@ -6,6 +6,8 @@ import (
 
 var cfg *config
 
+// Configuração da API e do banco de dados
+
 type config struct {
 	API APIConfig
 	DB  DBConfig

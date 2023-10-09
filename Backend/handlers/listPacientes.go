@@ -32,7 +32,7 @@ func GetAll(nameFilter string) (pacientes []models.Paciente, err error) {
 	for rows.Next() {
 		var paciente models.Paciente
 
-		err = rows.Scan(&paciente.ID, &paciente.Nome, &paciente.Sexo, &paciente.Data_nascimento, &paciente.Cidade, &paciente.Cpf)
+		err = rows.Scan(&paciente.ID, &paciente.Nome, &paciente.Cpf, &paciente.Sexo, &paciente.Data_nascimento, &paciente.Cidade)
 		if err != nil {
 			log.Printf("Erro no scan: %v", err)
 			continue
@@ -50,7 +50,7 @@ func ListPacientes(c echo.Context) error {
 
 	pacientes, err := GetAll(nameFilter)
 	if err != nil {
-		log.Println("Error dd", err)
+		log.Println("Error", err)
 		return c.String(http.StatusInternalServerError, "Erro ao listar pacientes")
 	}
 

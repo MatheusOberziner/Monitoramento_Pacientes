@@ -5,12 +5,13 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+// Endpoints que serão consumidos no Frontend
 func initialeRoutes(router *echo.Echo) {
 	basePath := "/api"
 	pacientes := router.Group(basePath + "/pacientes")
 	{
 		pacientes.GET("", handlers.ListPacientes)
 		// pacientes.GET("/:id", handlers.ShowPaciente)
-		// pacientes.POST("", handlers.CreatePaciente)
+		pacientes.POST("", handlers.CreatePaciente)
 	}
 }

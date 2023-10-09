@@ -9,6 +9,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
+// Responsável pela conexão com o banco de dados
 func OpenConnection() (*sql.DB, error) {
 	conf := configs.GetDB()
 
