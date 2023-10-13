@@ -6,11 +6,12 @@ import (
 
 var cfg *config
 
-// Configuração da API e do banco de dados
+// Configuração da API, do banco de dados e de CORS
 
 type config struct {
-	API APIConfig
-	DB  DBConfig
+	API  APIConfig
+	DB   DBConfig
+	CORS CORSConfig
 }
 
 type APIConfig struct {
@@ -25,13 +26,23 @@ type DBConfig struct {
 	Database string
 }
 
+type CORSConfig struct {
+	AllowedOrigins []string
+	AllowedMethods []string
+}
+
 func init() {
 	viper.SetDefault("api.port", "8080")
+
 	viper.SetDefault("database.host", "localhost")
 	viper.SetDefault("database.port", "5432")
 	viper.SetDefault("database.user", "postgres")
 	viper.SetDefault("database.pass", "1234")
 	viper.SetDefault("database.name", "monitoramento-pacientes")
+
+	// Configuração CORS padrão
+	viper.SetDefault("cors.allowed_origins", []string{"http://localhost:9000"})
+	viper.SetDefault("cors.allowed_methods", []string{"GET", "POST", "PUT", "DELETE"})
 }
 
 func Load() error {
@@ -59,6 +70,11 @@ func Load() error {
 		Database: viper.GetString("database.name"),
 	}
 
+	cfg.CORS = CORSConfig{
+		AllowedOrigins: viper.GetStringSlice("cors.allowed_origins"),
+		AllowedMethods: viper.GetStringSlice("cors.allowed_methods"),
+	}
+
 	return nil
 }
 
@@ -68,4 +84,8 @@ func GetDB() DBConfig {
 
 func GetServerPort() string {
 	return cfg.API.Port
+}
+
+func GetCORS() CORSConfig {
+	return cfg.CORS
 }

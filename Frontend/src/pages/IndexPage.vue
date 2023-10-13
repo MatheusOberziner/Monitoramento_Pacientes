@@ -12,21 +12,21 @@
               </div>
 
               <div class="col-12 col-md-8 q-pr-md row self-center justify-end">
-                <div class="col-12 col-md-5 q-pr-md">
+                <div class="col-12 col-md-4 q-pr-md">
                   <q-input
                     v-model="search"
                     outlined
-                    :label="'Pesquisar por:'"
-                    class=""
-                    @keyup.enter="returnPatients()"
+                    :label="'Filtrar por: ' + addLabel()"
+                    class="uppercase"
+                    @keyup.enter="returnPacientes()"
                   >
                     <template #append>
                       <q-btn-dropdown
                         flat
                         split
-                        color="black"
+                        color="primary"
                         icon="search"
-                        @click="returnPatients()"
+                        @click="returnPacientes()"
                       >
                         <q-list
                           dense
@@ -35,7 +35,7 @@
                           style="width: 12em;"
                         >
                           <q-item
-                            v-for="(filtro, index) in flitros"
+                            v-for="(filtro, index) in filtros"
                             :key="index"
                           >
                             <q-item-section side>
@@ -70,6 +70,7 @@
           <q-card-section>
             <div class="q-pa-md">
               <q-table
+                v-model:pagination="serverPagination"
                 :rows="rows"
                 :columns="columns"
                 :rows-per-page-options="[5,10,15]"
@@ -83,7 +84,7 @@
                       dense
                       size="sm"
                       style="width: 45px;"
-                      @click="showUpdate(props.row)"
+                      @click="show(props.row)"
                     />
                   </q-td>
                 </template>
@@ -107,7 +108,8 @@
 </template>
 <script>
 import { ref } from 'vue'
-
+import { getPacientes } from 'boot/axios'
+import RegisterPaciente from '../components/RegisterPaciente.vue'
 export default {
   name: 'IndexPage',
   setup () {
@@ -116,22 +118,21 @@ export default {
     const search = ref('')
 
     return {
+      loading,
       filtroSelecionado,
-      search,
-      loading
+      search
     }
   },
-
   data () {
     return {
+      serverPagination: {
+        page: 1,
+        rowsPerPage: 10
+      },
       filtros: [
         {
           label: 'Nome',
           value: 'nome'
-        },
-        {
-          label: 'Idade',
-          value: 'idade'
         },
         {
           label: 'Cidade',
@@ -146,9 +147,84 @@ export default {
         { name: 'cidade', align: 'left', label: 'Cidade', field: 'cidade', sortable: true },
         { name: 'actions', align: 'left', label: 'Ações', field: 'actions' }
       ],
-      rows: [
-        { nome: 'Matheus', cpf: '999.999.999-99', sexo: 'Masculino', idade: '20', cidade: 'Rio do Sul' }
-      ]
+      rows: []
+    }
+  },
+  created () {
+    this.returnPacientes()
+  },
+  methods: {
+    returnPacientes () {
+      this.loading = true
+
+      let nome = null, cidade = null
+      switch (this.filtroSelecionado) {
+        case 'nome':
+          nome = this.search
+          break
+        case 'cidade':
+          cidade = this.search
+          break
+        default:
+          break
+      }
+
+      getPacientes({
+        nome,
+        cidade
+      })
+        .then(data => {
+          this.rows = data
+          this.rows.forEach(paciente => {
+            paciente.idade = this.calculateAge(paciente.data_nascimento)
+          })
+          this.loading = false
+        })
+        .catch((error) => {
+          this.loading = false
+          this.rows = []
+          this.$q.notify({
+            message: 'Erro ao buscar pacientes...',
+            caption: error,
+            color: 'warning',
+            position: 'top',
+            actions: [
+              { icon: 'close', color: 'white', round: true }
+            ]
+          })
+        })
+    },
+    calculateAge (dateOfBorn) {
+      const dob = new Date(dateOfBorn)
+      const today = new Date()
+      let age = today.getFullYear() - dob.getFullYear()
+      const monthDiff = today.getMonth() - dob.getMonth()
+
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+        age--
+      }
+
+      return age
+    },
+    addLabel () {
+      const filtroSelecionado = this.filtroSelecionado
+
+      const customFields = {
+        cpf: 'CPF',
+        cnpj: 'CNPJ',
+        nome: 'Nome',
+        cidade: 'Cidade'
+      }
+
+      return customFields[filtroSelecionado]
+    },
+    showRegister () {
+      this.$q.dialog({
+        component: RegisterPaciente,
+        parent: this
+      }).onOk(() => {
+        this.returnPacientes()
+      })
     }
   }
 }
