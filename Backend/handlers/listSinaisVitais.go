@@ -28,7 +28,7 @@ func getSinais(idPaciente int64) (lista []models.Sinais_Vitais, err error) {
 	for rows.Next() {
 		var sinais_vitais models.Sinais_Vitais
 
-		err = rows.Scan(&sinais_vitais.ID_Paciente, &sinais_vitais.Frequencia_Cardiaca, &sinais_vitais.Temperatura, &sinais_vitais.Saturacao_Oxigenio, &sinais_vitais.Data_Hora_Registro)
+		err = rows.Scan(&sinais_vitais.ID_Paciente, &sinais_vitais.Frequencia_Cardiaca, &sinais_vitais.Pressao_Arterial, &sinais_vitais.Temperatura, &sinais_vitais.Saturacao_Oxigenio, &sinais_vitais.Data_Hora_Registro)
 		if err != nil {
 			log.Printf("Erro no scan: %v", err)
 			continue
