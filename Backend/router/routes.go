@@ -14,4 +14,8 @@ func initialeRoutes(router *echo.Echo) {
 		pacientes.GET("/:id", handlers.GetPaciente)
 		pacientes.POST("", handlers.CreatePaciente)
 	}
+	sinais_vitais := router.Group(basePath + "/sinais_vitais")
+	{
+		sinais_vitais.GET("/:id_paciente", handlers.ListSinaisVitais)
+	}
 }

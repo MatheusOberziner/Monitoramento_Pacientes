@@ -12,4 +12,9 @@ const createNewPaciente = async params => {
   return res.data
 }
 
-export { getPacientes, createNewPaciente }
+const getSinaisByPaciente = async idPaciente => {
+  const res = await axios.get(`/sinais_vitais/${idPaciente}`)
+  return res.data
+}
+
+export { getPacientes, createNewPaciente, getSinaisByPaciente }

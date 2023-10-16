@@ -84,7 +84,7 @@
                       dense
                       size="sm"
                       style="width: 45px;"
-                      @click="show(props.row)"
+                      @click="showSinais(props.row)"
                     />
                   </q-td>
                 </template>
@@ -110,6 +110,7 @@
 import { ref } from 'vue'
 import { getPacientes } from 'boot/axios'
 import RegisterPaciente from '../components/RegisterPaciente.vue'
+import HistoricoSinais from 'src/components/HistoricoSinais.vue'
 export default {
   name: 'IndexPage',
   setup () {
@@ -140,6 +141,7 @@ export default {
         }
       ],
       columns: [
+        { name: 'id', align: 'left', label: 'ID', field: 'id', sortable: true },
         { name: 'nome', align: 'left', label: 'Nome', field: 'nome', sortable: true },
         { name: 'cpf', align: 'left', label: 'CPF', field: 'cpf', sortable: true },
         { name: 'sexo', align: 'left', label: 'Sexo', field: 'sexo', sortable: true },
@@ -210,8 +212,6 @@ export default {
       const filtroSelecionado = this.filtroSelecionado
 
       const customFields = {
-        cpf: 'CPF',
-        cnpj: 'CNPJ',
         nome: 'Nome',
         cidade: 'Cidade'
       }
@@ -222,6 +222,15 @@ export default {
       this.$q.dialog({
         component: RegisterPaciente,
         parent: this
+      }).onOk(() => {
+        this.returnPacientes()
+      })
+    },
+    showSinais (row) {
+      this.$q.dialog({
+        component: HistoricoSinais,
+        parent: this,
+        componentProps: row
       }).onOk(() => {
         this.returnPacientes()
       })
