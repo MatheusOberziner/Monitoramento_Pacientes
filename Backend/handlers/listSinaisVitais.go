@@ -10,7 +10,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func getSinais(idPaciente int64) (lista []models.Sinais_Vitais, err error) {
+func getSinais(idPaciente int64, dataFiltro string) (lista []models.Sinais_Vitais, err error) {
 	conn, err := db.OpenConnection()
 	if err != nil {
 		return nil, err
@@ -18,9 +18,14 @@ func getSinais(idPaciente int64) (lista []models.Sinais_Vitais, err error) {
 	defer conn.Close()
 
 	sql := `SELECT * FROM sinais_vitais WHERE id_paciente = $1`
-	// params := []interface{}{}
+	params := []interface{}{idPaciente}
 
-	rows, err := conn.Query(sql, idPaciente)
+	if dataFiltro != "" {
+		sql += " AND DATE(data_hora_registro) = $2"
+		params = append(params, dataFiltro)
+	}
+
+	rows, err := conn.Query(sql, params...)
 	if err != nil {
 		return nil, err
 	}
@@ -40,14 +45,16 @@ func getSinais(idPaciente int64) (lista []models.Sinais_Vitais, err error) {
 	return lista, nil
 }
 
-// Cria um endpoint responsável por listar o histórico de sinais vitais do paciente
+// 2a e 5 Cria um endpoint responsável por listar o histórico de sinais vitais do paciente
 func ListSinaisVitais(c echo.Context) error {
 	idPaciente, err := strconv.Atoi(c.Param("id_paciente"))
 	if err != nil {
 		return c.String(http.StatusBadRequest, "ID de paciente inválido")
 	}
 
-	lista, err := getSinais(int64(idPaciente))
+	dataFiltro := c.QueryParam("data")
+
+	lista, err := getSinais(int64(idPaciente), dataFiltro)
 	if err != nil {
 		log.Println("Error", err)
 		return c.String(http.StatusInternalServerError, "Erro ao listar pacientes")

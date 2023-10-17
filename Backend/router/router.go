@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/MatheusOberziner/Monitoramento_Pacientes/configs"
+	"github.com/MatheusOberziner/Monitoramento_Pacientes/handlers"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -20,14 +21,15 @@ func Initialize() {
 
 	initialeRoutes(router)
 
+	// 2b A cada X tempo executará o evento
 	// Iniciada gorotina
 	go func() {
 		// Define loop para que a cada 20 seg execute a função de geração de dados
-		ticker := time.NewTicker(20 * time.Second)
+		ticker := time.NewTicker(30 * time.Second)
 
 		for range ticker.C {
-			log.Println("Loop executado a cada 20 segundos")
-			// handlers.GenerateRandomData()
+			log.Println("Loop executado a cada 30 segundos")
+			handlers.GenerateRandomData()
 		}
 	}()
 

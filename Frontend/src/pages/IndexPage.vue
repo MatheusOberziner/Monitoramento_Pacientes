@@ -1,3 +1,4 @@
+// 4a Página principal da interface do usuário
 <template>
   <div class="row">
     <div class="col-12">
@@ -55,6 +56,7 @@
                   </q-input>
                 </div>
 
+                // 1 Abre o modal do form de cadastro de paciente 
                 <div class="q-mt-sm">
                   <q-btn
                     label="Adicionar novo"
@@ -69,6 +71,7 @@
           </q-card-section>
           <q-card-section>
             <div class="q-pa-md">
+              // Tabela para listagem de pacientes
               <q-table
                 v-model:pagination="serverPagination"
                 :rows="rows"

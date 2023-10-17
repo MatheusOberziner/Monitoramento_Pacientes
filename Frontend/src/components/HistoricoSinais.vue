@@ -21,6 +21,7 @@
         </q-card-section>
         <q-card-section class="q-pa-none q-pb-md">
           <div class="col-12 q-px-md">
+            // 5.a. Tabela que retornará o histórico de dados de sinais vitais
             <q-table
               v-model:pagination="serverPagination"
               :dense="$q.screen.lt.md"
@@ -30,11 +31,30 @@
               :loading="loading"
             >
               <template #top-left>
-                <tr>
-                  <th>
-                    <span style="font-size: 1.2em;">{{ nome }}</span>
-                  </th>
-                </tr>
+                <span style="font-size: 1.2em;" class="text-bold">{{ nome }}</span>
+              </template>
+
+              // 5.b. Responsável por filtrar por data de registro
+              <template #top-right>
+                <div class="col-12 row">
+                  <q-input
+                    v-model="search"
+                    class="col-8 q-pr-sm"
+                    outlined
+                    dense
+                    type="date"
+                    label="Filtrar por Data registro"
+                    @keyup.enter="obterDadosAPI(this.id)"
+                  />
+
+                  <q-btn
+                    dense
+                    class="col-4"
+                    label="Buscar"
+                    color="primary"
+                    @click="obterDadosAPI(this.id)"
+                  />
+                </div>
               </template>
 
               <template #no-data>
@@ -97,7 +117,8 @@ export default {
         { name: 'saturacao_oxigenio', align: 'left', label: 'Saturacao Oxigenio', field: 'saturacao_oxigenio', sortable: true },
         { name: 'data_hora_registro', align: 'left', label: 'Data/Hora registro', field: 'data_hora_registro', sortable: true, format: (val) => val ? convertDate.convertDateToBr(val) : '' }
       ],
-      rows: []
+      rows: [],
+      search: ''
     }
   },
   created () {
@@ -110,7 +131,9 @@ export default {
         delay: 200
       })
 
-      await getSinaisByPaciente(id)
+      const data = this.search
+
+      await getSinaisByPaciente(id, { data })
         .then(data => {
           this.rows = data
           this.$q.loading.hide()
@@ -119,13 +142,13 @@ export default {
           this.$q.loading.hide()
           this.$q.notify({
             message: 'Erro ao buscar dados...',
-            caption: error,
             color: 'negative',
             position: 'top',
             actions: [
               { icon: 'close', color: 'white', round: true }
             ]
           })
+          console.log(error)
         })
     }
   }

@@ -33,7 +33,7 @@ func post(paciente models.Paciente) (id int64, err error) {
 	return
 }
 
-// Cria um endpoint responsável por adicionar um paciente
+// 1a e 1b Cria um endpoint responsável por adicionar um paciente
 func CreatePaciente(c echo.Context) error {
 	request := new(CreatePacienteRequest)
 	if err := c.Bind(request); err != nil {

@@ -9,6 +9,7 @@ import (
 	"github.com/MatheusOberziner/Monitoramento_Pacientes/db"
 )
 
+// 2b função responsável por gerar dados aleatoriamente
 func GenerateRandomData() {
 	conn, err := db.OpenConnection()
 	if err != nil {
