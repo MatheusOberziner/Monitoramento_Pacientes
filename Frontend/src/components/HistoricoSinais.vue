@@ -1,7 +1,6 @@
 <template>
   <q-dialog ref="dialogRef" @hide="onDialogHide">
     <div
-      v-if="dadosCarregados"
       class="col-12 col-md-12"
       style="min-width: 50% !important;"
     >
@@ -23,7 +22,6 @@
         <q-card-section class="q-pa-none q-pb-md">
           <div class="col-12 q-px-md">
             <q-table
-              v-if="dadosCarregados"
               v-model:pagination="serverPagination"
               :dense="$q.screen.lt.md"
               :rows="rows"
@@ -31,13 +29,23 @@
               :rows-per-page-options="[5, 10, 15]"
               :loading="loading"
             >
-            <template #top-left>
-              <tr>
-                <th>
-                  <span style="font-size: 1.2em;">{{ nome }}</span>
-                </th>
-              </tr>
-            </template>
+              <template #top-left>
+                <tr>
+                  <th>
+                    <span style="font-size: 1.2em;">{{ nome }}</span>
+                  </th>
+                </tr>
+              </template>
+
+              <template #no-data>
+                <q-icon
+                  name="warning"
+                  color="warning"
+                  size="xs"
+                  class="q-pa-sm"
+                />
+                <span style="font-size: 12px;">Nenhum dado encontrado!</span>
+              </template>
             </q-table>
           </div>
         </q-card-section>
@@ -49,6 +57,7 @@
 import { useDialogPluginComponent } from 'quasar'
 import { getSinaisByPaciente } from 'boot/axios'
 import { ref } from 'vue'
+import { convertDate } from '../helpers/convertDate.js'
 export default {
   props: {
     id: {
@@ -64,12 +73,10 @@ export default {
     ...useDialogPluginComponent.emits
   ],
   setup () {
-    const dadosCarregados = ref(false)
     const loading = ref(false)
     const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginComponent()
 
     return {
-      dadosCarregados,
       loading,
       dialogRef,
       onDialogHide,
@@ -88,26 +95,28 @@ export default {
         { name: 'pressao_arterial', align: 'left', label: 'Pressao Arterial', field: 'pressao_arterial', sortable: true },
         { name: 'temperatura', align: 'left', label: 'Temperatura', field: 'temperatura', sortable: true },
         { name: 'saturacao_oxigenio', align: 'left', label: 'Saturacao Oxigenio', field: 'saturacao_oxigenio', sortable: true },
-        { name: 'data_hora_registro', align: 'left', label: 'Data/Hora registro', field: 'data_hora_registro', sortable: true }
+        { name: 'data_hora_registro', align: 'left', label: 'Data/Hora registro', field: 'data_hora_registro', sortable: true, format: (val) => val ? convertDate.convertDateToBr(val) : '' }
       ],
       rows: []
     }
   },
+  created () {
+    this.obterDadosAPI(this.id)
+  },
   methods: {
-    async obterDadosAPI () {
+    async obterDadosAPI (id) {
       this.$q.loading.show({
-        message: 'Buscando dados...'
+        message: 'Buscando dados...',
+        delay: 200
       })
 
-      await getSinaisByPaciente(this.id)
+      await getSinaisByPaciente(id)
         .then(data => {
           this.rows = data
           this.$q.loading.hide()
-          this.dadosCarregados = true
         })
         .catch(error => {
           this.$q.loading.hide()
-          this.dadosCarregados = true
           this.$q.notify({
             message: 'Erro ao buscar dados...',
             caption: error,

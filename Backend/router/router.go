@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/MatheusOberziner/Monitoramento_Pacientes/configs"
-	"github.com/MatheusOberziner/Monitoramento_Pacientes/handlers"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -28,7 +27,7 @@ func Initialize() {
 
 		for range ticker.C {
 			log.Println("Loop executado a cada 20 segundos")
-			handlers.GenerateRandomData()
+			// handlers.GenerateRandomData()
 		}
 	}()
 
