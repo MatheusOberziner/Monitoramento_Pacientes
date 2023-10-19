@@ -213,12 +213,13 @@ export default {
 
       return age
     },
-    // A cada 30 segundos irá verificar se há alguma notificação
+    // 3a A cada 30 segundos irá verificar se há alguma notificação
     startInterval () {
       setInterval(this.checkNotification, 30000)
 
       this.checkNotification()
     },
+    // 3a
     checkNotification () {
       refreshNotification()
         .then(data => {

@@ -21,7 +21,7 @@ func initialeRoutes(router *echo.Echo) {
 	{
 		sinais_vitais.GET("/:id_paciente", handlers.ListSinaisVitais)
 	}
-	// Endpoint responsável pelo envio da mensagem da notificação
+	// 3a Endpoint responsável pelo envio da mensagem da notificação
 	router.POST(basePath+"/notificacao", func(c echo.Context) error {
 		mensagem := handlers.GetMensagem()
 		log.Println("Mensagem enviada: ", mensagem)
