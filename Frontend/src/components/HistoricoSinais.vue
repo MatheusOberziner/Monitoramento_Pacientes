@@ -21,7 +21,7 @@
         </q-card-section>
         <q-card-section class="q-pa-none q-pb-md">
           <div class="col-12 q-px-md">
-            // 5.a. Tabela que retornará o histórico de dados de sinais vitais
+            <!-- 5.a. Tabela que retornará o histórico de dados de sinais vitais -->
             <q-table
               v-model:pagination="serverPagination"
               :dense="$q.screen.lt.md"
@@ -34,7 +34,7 @@
                 <span style="font-size: 1.2em;" class="text-bold">{{ nome }}</span>
               </template>
 
-              // 5.b. Responsável por filtrar por data de registro
+              <!-- 5.b. Responsável por filtrar por data de registro -->
               <template #top-right>
                 <div class="col-12 row">
                   <q-input

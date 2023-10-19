@@ -20,4 +20,9 @@ const getSinaisByPaciente = async (idPaciente, params) => {
   return res.data
 }
 
-export { getPacientes, createNewPaciente, getSinaisByPaciente }
+const refreshNotification = async params => {
+  const res = await axios.post('/notificacao', { params })
+  return res.data
+}
+
+export { getPacientes, createNewPaciente, getSinaisByPaciente, refreshNotification }

@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
-	"net/http"
 	"time"
 
 	"github.com/MatheusOberziner/Monitoramento_Pacientes/db"
-	"github.com/labstack/echo/v4"
 )
+
+var mensagemNotificacao string
 
 // 2b função responsável por gerar dados aleatoriamente
 func GenerateRandomData() {
@@ -20,19 +20,20 @@ func GenerateRandomData() {
 	defer conn.Close()
 
 	var idPaciente int64
-	sql := `SELECT id FROM pacientes ORDER BY RANDOM() LIMIT 1`
+	var nomePaciente string
+	sql := `SELECT id, nome FROM pacientes ORDER BY RANDOM() LIMIT 1`
 
-	err = conn.QueryRow(sql).Scan(&idPaciente)
+	err = conn.QueryRow(sql).Scan(&idPaciente, &nomePaciente)
 	if err != nil {
 		log.Printf("Erro ao selecionar um id_paciente aleatório: %v", err)
 	}
 
-	var mensagem string
-
+	mensagemNotificacao = ""
+	mensagemNotificacao += nomePaciente + " - "
 	// random entre 20 e 130 bpm
 	frequenciaCardiaca := rand.Intn(111) + 20
 	if frequenciaCardiaca < 60 || frequenciaCardiaca > 100 {
-		mensagem += "Frequência Cardíaca anormal "
+		mensagemNotificacao += "Frequência Cardíaca anormal / "
 	}
 
 	// random entre 100 e 180
@@ -40,12 +41,23 @@ func GenerateRandomData() {
 	// random entre 70 e 110
 	pressaoDiastolica := rand.Intn(40) + 70
 	pressaoArterial := fmt.Sprintf("%d/%d", pressaoSistolica, pressaoDiastolica)
+	if pressaoSistolica < 139 || pressaoDiastolica > 89 {
+		mensagemNotificacao += "Pressão Arterial elevada / "
+	}
 
 	// random entre 33 e 43 °C
 	temperatura := 33.0 + rand.Float64()*(43.0-33.0)
+	if temperatura < 36 {
+		mensagemNotificacao += "Temperatura corporal baixa / "
+	} else if temperatura > 37.5 {
+		mensagemNotificacao += "Temperatura corporal alta / "
+	}
 
-	// random entre 80 e 99 %
-	saturacaoOxigenio := 80.0 + rand.Float64()*(99.0-80.0)
+	// random entre 84 e 99 %
+	saturacaoOxigenio := 84.0 + rand.Float64()*(99.0-84.0)
+	if saturacaoOxigenio < 95 {
+		mensagemNotificacao += "Saturação abaixo / "
+	}
 
 	dataHoraRegistro := time.Now().Format("2006/01/02 15:04:05")
 
@@ -54,16 +66,10 @@ func GenerateRandomData() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
+	log.Printf("Nome: %s", nomePaciente)
 	log.Println("Dados inseridos com sucesso para o paciente de ID:", idPaciente)
-	sendMessageToApi(mensagem)
 }
 
-func sendMessageToApi(mensagem string) {
-	e := echo.New()
-
-	e.GET("/api/enviar-mensagem", func(c echo.Context) error {
-		log.Println("Mensagem enviada")
-		return c.JSON(http.StatusOK, map[string]string{"mensagem": mensagem})
-	})
+func GetMensagem() string {
+	return mensagemNotificacao
 }

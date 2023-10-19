@@ -71,7 +71,7 @@
           </q-form>
 
           <div class="col-12 row justify-center q-pt-lg">
-            // 1a e 1b confirma o cadastro de paciente
+            <!-- 1a e 1b confirma o cadastro de paciente -->
             <q-btn
               icon="done"
               label="Incluir paciente"

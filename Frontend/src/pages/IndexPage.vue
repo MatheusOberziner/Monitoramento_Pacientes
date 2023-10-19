@@ -1,4 +1,4 @@
-// 4a Página principal da interface do usuário
+<!-- 4a Página principal da interface do usuário -->
 <template>
   <div class="row">
     <div class="col-12">
@@ -56,7 +56,7 @@
                   </q-input>
                 </div>
 
-                // 1 Abre o modal do form de cadastro de paciente 
+                <!-- 1 Abre o modal do form de cadastro de paciente -->
                 <div class="q-mt-sm">
                   <q-btn
                     label="Adicionar novo"
@@ -71,7 +71,7 @@
           </q-card-section>
           <q-card-section>
             <div class="q-pa-md">
-              // Tabela para listagem de pacientes
+              <!-- Tabela para listagem de pacientes -->
               <q-table
                 v-model:pagination="serverPagination"
                 :rows="rows"
@@ -111,7 +111,7 @@
 </template>
 <script>
 import { ref } from 'vue'
-import { getPacientes } from 'boot/axios'
+import { getPacientes, refreshNotification } from 'boot/axios'
 import RegisterPaciente from '../components/RegisterPaciente.vue'
 import HistoricoSinais from 'src/components/HistoricoSinais.vue'
 export default {
@@ -157,6 +157,7 @@ export default {
   },
   created () {
     this.returnPacientes()
+    this.startInterval()
   },
   methods: {
     returnPacientes () {
@@ -193,6 +194,7 @@ export default {
             caption: error,
             color: 'warning',
             position: 'top',
+            timeout: 10000,
             actions: [
               { icon: 'close', color: 'white', round: true }
             ]
@@ -210,6 +212,29 @@ export default {
       }
 
       return age
+    },
+    // A cada 30 segundos irá verificar se há alguma notificação
+    startInterval () {
+      setInterval(this.checkNotification, 30000)
+
+      this.checkNotification()
+    },
+    checkNotification () {
+      refreshNotification()
+        .then(data => {
+          const mensagem = data.mensagem
+
+          if (mensagem) {
+            this.$q.notify({
+              message: mensagem,
+              color: 'warning',
+              position: 'top',
+              actions: [
+                { icon: 'close', color: 'white', round: true }
+              ]
+            })
+          }
+        })
     },
     addLabel () {
       const filtroSelecionado = this.filtroSelecionado

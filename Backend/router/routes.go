@@ -1,6 +1,9 @@
 package router
 
 import (
+	"log"
+	"net/http"
+
 	"github.com/MatheusOberziner/Monitoramento_Pacientes/handlers"
 	"github.com/labstack/echo/v4"
 )
@@ -18,4 +21,10 @@ func initialeRoutes(router *echo.Echo) {
 	{
 		sinais_vitais.GET("/:id_paciente", handlers.ListSinaisVitais)
 	}
+	// Endpoint responsável pelo envio da mensagem da notificação
+	router.POST(basePath+"/notificacao", func(c echo.Context) error {
+		mensagem := handlers.GetMensagem()
+		log.Println("Mensagem enviada: ", mensagem)
+		return c.JSON(http.StatusOK, map[string]string{"mensagem": mensagem})
+	})
 }
