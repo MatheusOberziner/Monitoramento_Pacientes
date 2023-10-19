@@ -2,7 +2,6 @@ package router
 
 import (
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/MatheusOberziner/Monitoramento_Pacientes/configs"
@@ -24,11 +23,10 @@ func Initialize() {
 	// 2b A cada X tempo executará o evento
 	// Iniciada gorotina
 	go func() {
-		// Define loop para que a cada 20 seg execute a função de geração de dados
+		// Define loop para que a cada 30 seg execute a função de geração de dados
 		ticker := time.NewTicker(30 * time.Second)
 
 		for range ticker.C {
-			log.Println("Loop executado a cada 30 segundos")
 			handlers.GenerateRandomData()
 		}
 	}()
