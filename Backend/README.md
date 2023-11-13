@@ -24,7 +24,7 @@ CREATE TABLE sinais_vitais (
   FOREIGN KEY (id_paciente) REFERENCES pacientes (id)
 );
 
-Se quiser adicionar alguns pacientes pode seguir o sql abaixo:
+Se quiser adicionar alguns pacientes pode seguir o sql a seguir:
 INSERT INTO pacientes (nome, cpf, sexo, data_nascimento, cidade)
 	VALUES ('Giovana Rafaela Regina Nogueira', '161.899.786-65', 'Feminino', '27/05/1960', 'Rio Branco');
 INSERT INTO pacientes (nome, cpf, sexo, data_nascimento, cidade)
